@@ -153,6 +153,8 @@ const i18n = {
     rCopied: "कॉपी हो गया ✓",
     rFoot: "यह पर्चा सत्र में दिए मार्गदर्शन का प्रमाण है। औपचारिक आवेदन केवल आधिकारिक पोर्टल पर करें।",
     btnFinishDone: "पर्चा तैयार ✓",
+    themeDark: "डार्क मोड",
+    themeLight: "लाइट मोड",
     btnBackSchemes: "परिणामों पर लौटें",
     btnFinishGuidance: "आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)",
     disclaimer: "अस्वीकरण: यह परिणाम केवल मार्गदर्शन के लिए हैं और आधिकारिक सरकारी निर्णय का प्रतिनिधित्व नहीं करते। लाभ के लिए अधिकृत पोर्टल पर आवेदन आवश्यक है।",
@@ -253,6 +255,8 @@ const i18n = {
     rCopied: "Copied ✓",
     rFoot: "This receipt is proof of in-session guidance. Submit the formal application only on the official portal.",
     btnFinishDone: "Receipt ready ✓",
+    themeDark: "Dark mode",
+    themeLight: "Light mode",
     btnBackSchemes: "Back to results",
     btnFinishGuidance: "Finish application guidance (voice confirmed)",
     disclaimer: "Disclaimer: These outcomes are for guidance purposes and do not represent an official government determination. Formal application on designated government portals is required.",
@@ -278,10 +282,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 function setupLanguageToggle() {
   document.getElementById("btn-hi").addEventListener("click", () => setLanguage("hi-IN"));
   document.getElementById("btn-en").addEventListener("click", () => setLanguage("en-IN"));
+  setupThemeToggle();
+}
+
+let theme = "light";
+const ICON_MOON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+const ICON_SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+
+function renderThemeButton() {
+  const btn = document.getElementById("btn-theme");
+  const icon = document.getElementById("theme-icon");
+  icon.innerHTML = theme === "dark" ? ICON_SUN : ICON_MOON;
+  const t = i18n[currentLang];
+  const label = theme === "dark" ? t.themeLight : t.themeDark;
+  btn.title = label;
+  btn.setAttribute("aria-label", label);
+  btn.setAttribute("aria-pressed", theme === "dark");
+}
+
+function setupThemeToggle() {
+  try {
+    const saved = localStorage.getItem("ss-theme");
+    if (saved === "dark" || saved === "light") theme = saved;
+  } catch (e) {}
+  applyTheme(theme, false);
+  document.getElementById("btn-theme").addEventListener("click", () => {
+    applyTheme(theme === "dark" ? "light" : "dark", true);
+  });
+}
+
+function applyTheme(next, persist) {
+  theme = next;
+  document.documentElement.dataset.theme = theme;
+  if (persist) {
+    try { localStorage.setItem("ss-theme", theme); } catch (e) {}
+  }
+  renderThemeButton();
 }
 
 function setLanguage(lang) {
   currentLang = lang;
+  renderThemeButton();
   document.getElementById("btn-hi").classList.toggle("active", lang === "hi-IN");
   document.getElementById("btn-en").classList.toggle("active", lang === "en-IN");
 
