@@ -837,9 +837,9 @@ main {
   transition: background 120ms ease, color 120ms ease;
 }
 
-.sort-btn:hover { background: var(--surface-dim); color: var(--text-primary); }
+.sort-btn:hover { background: var(--surface-dim); color: var(--text-main); }
 .sort-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.sort-btn.active { background: var(--ink); color: var(--paper-50); }
+.sort-btn.active { background: var(--ink-900); color: var(--paper-50); }
 
 /* ---------- Status accent on scheme cards ---------- */
 .scheme-card.st-Eligible { border-left: 3px solid var(--ok-fg); }
