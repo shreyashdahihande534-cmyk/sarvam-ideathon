@@ -1,0 +1,49 @@
+{
+  "schemes": [
+    {
+      "id": "pm_kisan",
+      "name": "PM-KISAN Samman Nidhi",
+      "name_hi": "प्रधानमंत्री किसान सम्मान निधि",
+      "clause_cited": "PM-KISAN Operational Guidelines 2019, Section 2.1 (Small and Marginal Farmers Scheme)",
+      "benefit": "₹6,000 per year in 3 equal installments of ₹2,000",
+      "benefit_hi": "₹6,000 प्रति वर्ष (₹2,000 की 3 समान किस्तों में)",
+      "required_docs": ["Land Ownership Document (Khatauni)", "Aadhaar Card", "Bank Account linked to Aadhaar"]
+    },
+    {
+      "id": "ayushman_bharat",
+      "name": "Ayushman Bharat (PM-JAY)",
+      "name_hi": "आयुष्मान भारत (प्रधानमंत्री जन आरोग्य योजना)",
+      "clause_cited": "PM-JAY Guidelines 2018, Eligibility Criteria based on SECC 2011 deprivation indicators (D1 to D7)",
+      "benefit": "Free secondary and tertiary healthcare cover up to ₹5 Lakh per family per year",
+      "benefit_hi": "प्रति परिवार प्रति वर्ष ₹5 लाख तक का मुफ्त कैशलेस इलाज",
+      "required_docs": ["Aadhaar Card", "Ration Card (BPL/NFSA/Antyodaya)"]
+    },
+    {
+      "id": "pm_ujjwala",
+      "name": "PM Ujjwala Yojana 2.0",
+      "name_hi": "प्रधानमंत्री उज्ज्वला योजना 2.0",
+      "clause_cited": "Ujjwala 2.0 Guidelines 2021, Ministry of Petroleum & Natural Gas, Clause 3 (Release of LPG connections to poor households)",
+      "benefit": "Deposit-free LPG connection, first refill free, and hotplate/stove free of cost",
+      "benefit_hi": "मुफ्त एलपीजी कनेक्शन, पहला भरा सिलेंडर और गैस चूल्हा बिल्कुल मुफ्त",
+      "required_docs": ["Aadhaar of adult woman applicant", "BPL Ration Card / Income Certificate", "Bank Account details"]
+    },
+    {
+      "id": "atal_pension",
+      "name": "Atal Pension Yojana (APY)",
+      "name_hi": "अटल पेंशन योजना (APY)",
+      "clause_cited": "PFRDA APY Scheme Regulations 2015, Eligibility & Exit Criteria",
+      "benefit": "Guaranteed monthly pension between ₹1,000 and ₹5,000 after attaining 60 years of age",
+      "benefit_hi": "60 वर्ष की आयु के बाद ₹1,000 से ₹5,000 तक की गारंटीड मासिक पेंशन",
+      "required_docs": ["Aadhaar Card", "Active Savings Bank Account"]
+    },
+    {
+      "id": "up_kisan_durghatna",
+      "name": "UP Mukhyamantri Kisan Durghatna Bima Yojana",
+      "name_hi": "यूपी मुख्यमंत्री किसान दुर्घटना कल्याण योजना",
+      "clause_cited": "UP Revenue Dept Order No. 451/2020 (Accidental Insurance Scheme for Farmers and Agricultural Laborers)",
+      "benefit": "Financial compensation of up to ₹5 Lakh in accidental demise or total disability for agricultural workers",
+      "benefit_hi": "दुर्घटना में मृत्यु या दिव्यांगता पर किसान/बटाईदार/श्रमिक के परिवार को ₹5 लाख तक की आर्थिक सहायता",
+      "required_docs": ["Aadhaar Card", "Khatauni/Labor Registration Certificate", "Death/Disability Certificate (in event of claim)"]
+    }
+  ]
+}

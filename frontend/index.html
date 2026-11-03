@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>सरकारी सहायक | Sarkari Sahayak - Voice-First Welfare Agent</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="top-bar">
+      <div class="brand">
+        <div class="chakra-badge">☸</div>
+        <div class="brand-text">
+          <h1 id="brand-title">सरकारी सहायक (Sarkari Sahayak)</h1>
+          <p id="app-subtitle">आवाज से जानें अपनी सरकारी योजनाएं और करें आवेदन</p>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="btn-hi" class="lang-btn active">हिंदी</button>
+        <button id="btn-en" class="lang-btn">English</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Personas Ribbon for 1-Click Evaluation -->
+  <div class="personas-bar">
+    <div class="personas-inner">
+      <span class="personas-label" id="personas-heading">Demo Personas:</span>
+      <div id="personas-list" style="display:inline-flex; gap:8px;"></div>
+    </div>
+  </div>
+
+  <main>
+    <!-- Privacy & Guidance Disclaimer -->
+    <div class="privacy-banner">
+      <span style="font-size:1.2rem;">🔒</span>
+      <div id="privacy-text">
+        <strong>गोपनीयता सूचना (Privacy Protected):</strong> आधार संख्या और व्यक्तिगत दस्तावेज़ केवल इस सत्र के लिए मेमोरी में संसाधित होते हैं। कोई भी पहचानकर्ता स्थायी रूप से संग्रहीत नहीं किया जाता।
+      </div>
+    </div>
+
+    <!-- Stepper Navigation -->
+    <div class="stepper">
+      <div class="step-item active" id="step-item-1">
+        <span class="step-num">1</span>
+        <span id="step-label-1">1. आवाज साक्षात्कार</span>
+      </div>
+      <div class="step-item" id="step-item-2">
+        <span class="step-num">2</span>
+        <span id="step-label-2">2. दस्तावेज़ सत्यापन</span>
+      </div>
+      <div class="step-item" id="step-item-3">
+        <span class="step-num">3</span>
+        <span id="step-label-3">3. योजना परिणाम</span>
+      </div>
+      <div class="step-item" id="step-item-4">
+        <span class="step-num">4</span>
+        <span id="step-label-4">4. आवेदन सहायता</span>
+      </div>
+    </div>
+
+    <!-- STEP 1: Voice Interview -->
+    <section class="card" id="step-card-1">
+      <div class="voice-hero">
+        <button class="mic-circle" id="mic-btn" title="Click to speak">
+          🎙️
+        </button>
+        <div class="wave-animation">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+        <p id="mic-prompt-text" style="font-weight:600; margin-top:12px; color:#334155;">बोलने के लिए माइक दबाएं या नीचे विवरण भरें</p>
+        <p id="interview-status" style="font-size:0.85rem; color:#64748b; margin-top:6px; min-height:20px;"></p>
+      </div>
+
+      <div style="border-top: 1px solid var(--border); padding-top:16px;">
+        <h3 id="profile-heading" style="font-size:0.95rem; font-weight:700; color:#334155; margin-bottom:12px;">नागरिक विवरण (Citizen Profile)</h3>
+        <div class="form-grid">
+          <div class="input-group">
+            <label id="lbl-age">उम्र (Age):</label>
+            <input type="number" id="input-age" value="38">
+          </div>
+          <div class="input-group">
+            <label id="lbl-gender">लिंग (Gender):</label>
+            <select id="input-gender">
+              <option value="male" id="opt-gender-m">पुरुष (Male)</option>
+              <option value="female" id="opt-gender-f">महिला (Female)</option>
+              <option value="other" id="opt-gender-o">अन्य (Other)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label id="lbl-occupation">व्यवसाय (Occupation):</label>
+            <select id="input-occupation">
+              <option value="farmer" id="opt-occ-farmer">किसान (Farmer)</option>
+              <option value="agricultural_laborer" id="opt-occ-laborer">कृषि मजदूर (Agricultural Laborer)</option>
+              <option value="gig_worker" id="opt-occ-gig">गिग कर्मी (Gig Worker)</option>
+              <option value="homemaker" id="opt-occ-home">गृहणी (Homemaker)</option>
+              <option value="salaried_professional" id="opt-occ-salaried">वेतनभोगी (Salaried)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label id="lbl-income">वार्षिक आय (Annual Income ₹):</label>
+            <input type="number" id="input-income" value="95000">
+          </div>
+          <div class="input-group">
+            <label id="lbl-state">राज्य (State):</label>
+            <select id="input-state">
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Rajasthan">Rajasthan</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label id="lbl-land">कृषि भूमि (Cultivable Land - Hectares):</label>
+            <input type="number" step="0.1" id="input-land" value="1.2">
+          </div>
+          <div class="input-group">
+            <label id="lbl-lpg">गैस कनेक्शन (Has LPG Connection?):</label>
+            <select id="input-lpg">
+              <option value="false" id="opt-lpg-no">नहीं (No)</option>
+              <option value="true" id="opt-lpg-yes" selected>हाँ (Yes)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label id="lbl-tax">आयकर दाता (Income Tax Payer?):</label>
+            <select id="input-tax">
+              <option value="false" id="opt-tax-no" selected>नहीं (No)</option>
+              <option value="true" id="opt-tax-yes">हाँ (Yes)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label id="lbl-category">सामाजिक वर्ग (Category):</label>
+            <select id="input-category">
+              <option value="OBC" selected>OBC (Other Backward Class)</option>
+              <option value="SC">SC (Scheduled Caste)</option>
+              <option value="ST">ST (Scheduled Tribe)</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="text-align:right; margin-top:24px;">
+          <button class="btn-primary" id="btn-check">
+            दस्तावेज़ सत्यापन पर आगे बढ़ें →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: Document Verification (Sarvam Vision) -->
+    <section class="card" id="step-card-2" style="display:none;">
+      <h2 id="doc-title" style="font-size:1.15rem; font-weight:700; margin-bottom:6px;">दस्तावेज़ सत्यापन (Sarvam Vision OCR)</h2>
+      <p id="doc-subtitle" style="font-size:0.85rem; color:#64748b; margin-bottom:18px;">
+        सटीक पात्रता के लिए आधार कार्ड और आय प्रमाण पत्र का स्वचालित विश्लेषण। 80% से कम आत्मविश्वास वाले क्षेत्रों की आवाज द्वारा पुष्टि की जाती है।
+      </p>
+
+      <div style="display:flex; gap:12px; margin-bottom:18px;">
+        <button class="btn-secondary" id="btn-doc-aadhaar">
+          📄 नमूना आधार कार्ड अपलोड करें
+        </button>
+        <button class="btn-secondary" id="btn-doc-income">
+          📜 नमूना आय प्रमाण पत्र अपलोड करें
+        </button>
+      </div>
+
+      <div id="ocr-results">
+        <div id="ocr-empty-placeholder" style="text-align:center; padding:24px; color:#94a3b8; border:1px dashed #cbd5e1; border-radius:12px;">
+          ऊपर दिए गए बटन से कोई भी दस्तावेज़ स्कैन करें।
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:24px;">
+        <button class="btn-secondary" id="btn-back-step1" onclick="goToStep(1)">← साक्षात्कार पर वापस जाएं</button>
+        <button class="btn-primary" id="btn-proceed-results" style="display:none;">
+          योजना पात्रता परिणाम देखें →
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 3: Eligibility Results Dashboard -->
+    <section class="card" id="step-card-3" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div>
+          <h2 id="results-title" style="font-size:1.2rem; font-weight:700;">आपकी कल्याणकारी योजनाएं (5 Schemes Evaluated)</h2>
+          <p id="results-subtitle" style="font-size:0.85rem; color:#64748b;">नियम-आधारित सत्यापन + Sarvam-105B स्पष्टीकरण + Bulbul v3 आवाज</p>
+        </div>
+        <button class="btn-secondary" id="btn-recheck" onclick="runEligibilityCheck()">🔄 पुनः जांचें</button>
+      </div>
+
+      <div class="schemes-list" id="schemes-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="margin-top:24px; text-align:left;">
+        <button class="btn-secondary" id="btn-back-step2" onclick="goToStep(2)">← दस्तावेज़ पर वापस जाएं</button>
+      </div>
+    </section>
+
+    <!-- STEP 4: Form-Filling Walkthrough -->
+    <section class="card" id="step-card-4" style="display:none;">
+      <div style="border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:18px;">
+        <h2 id="form-title" style="font-size:1.2rem; font-weight:700; color:var(--navy);">PM-KISAN आवेदन पत्र (स्वतः भरा हुआ मार्गदर्शन)</h2>
+        <p id="form-subtitle" style="font-size:0.85rem; color:#64748b;">सत्यापित आधार और आय विवरण से स्वतः तैयार किया गया आवेदन पत्र।</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label id="lbl-form-name">आवेदक का पूरा नाम (Full Name):</label>
+          <input type="text" id="form-name" readonly>
+        </div>
+        <div class="input-group">
+          <label id="lbl-form-aadhaar">मास्क्ड आधार संख्या (Aadhaar Number):</label>
+          <input type="text" id="form-aadhaar" readonly>
+        </div>
+        <div class="input-group">
+          <label id="lbl-form-state">राज्य (State):</label>
+          <input type="text" id="form-state" readonly>
+        </div>
+        <div class="input-group">
+          <label id="lbl-form-land">कृषि भूमि (Cultivable Land):</label>
+          <input type="text" id="form-land" readonly>
+        </div>
+        <div class="input-group" style="grid-column: 1 / -1;">
+          <label id="lbl-form-bank">बैंक खाता विवरण (Bank Details):</label>
+          <input type="text" id="form-bank" readonly>
+        </div>
+      </div>
+
+      <div id="form-audit-box" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:14px; border-radius:10px; margin:20px 0; color:#166534; font-size:0.88rem;">
+        ✓ सभी 5 पात्रता मानदंड PM-KISAN धारा 2.1 के अनुसार सत्यापित हैं।<br>
+        ✓ आधार बैंक खाते से डीबीटी (Direct Benefit Transfer) के लिए लिंक है।
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn-secondary" id="btn-back-schemes">← परिणामों पर लौटें</button>
+        <button class="btn-primary" id="btn-finish-guidance">
+          ✓ आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)
+        </button>
+      </div>
+    </section>
+
+    <div class="disclaimer-text" id="disclaimer-banner">
+      अस्वीकरण: यह परिणाम मार्गदर्शन हेतु हैं और आधिकारिक सरकारी निर्णय का प्रतिनिधित्व नहीं करते। लाभ के लिए अधिकृत पोर्टल पर आवेदन आवश्यक है।
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

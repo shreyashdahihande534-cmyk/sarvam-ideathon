@@ -1,0 +1,170 @@
+[
+  {
+    "id": "persona_1",
+    "name": "Ramesh Yadav",
+    "age": 38,
+    "gender": "male",
+    "occupation": "farmer",
+    "annual_income": 95000,
+    "state": "Uttar Pradesh",
+    "landholding_hectares": 1.2,
+    "has_lpg_connection": true,
+    "is_income_tax_payer": false,
+    "category": "OBC",
+    "expected": {
+      "pm_kisan": "Eligible",
+      "ayushman_bharat": "Eligible",
+      "pm_ujjwala": "Not eligible",
+      "atal_pension": "Eligible",
+      "up_kisan_durghatna": "Eligible"
+    },
+    "note": "Small farmer in UP with cultivable land under 2 ha and income under 1 Lakh."
+  },
+  {
+    "id": "persona_2",
+    "name": "Sunita Devi",
+    "age": 32,
+    "gender": "female",
+    "occupation": "homemaker",
+    "annual_income": 48000,
+    "state": "Bihar",
+    "landholding_hectares": 0.0,
+    "has_lpg_connection": false,
+    "is_income_tax_payer": false,
+    "category": "SC",
+    "expected": {
+      "pm_kisan": "Not eligible",
+      "ayushman_bharat": "Eligible",
+      "pm_ujjwala": "Eligible",
+      "atal_pension": "Eligible",
+      "up_kisan_durghatna": "Not eligible"
+    },
+    "note": "Adult woman in low-income SC household without LPG connection."
+  },
+  {
+    "id": "persona_3",
+    "name": "Vikram Chauhan",
+    "age": 24,
+    "gender": "male",
+    "occupation": "gig_worker",
+    "annual_income": 180000,
+    "state": "Delhi",
+    "landholding_hectares": 0.0,
+    "has_lpg_connection": true,
+    "is_income_tax_payer": false,
+    "category": "General",
+    "expected": {
+      "pm_kisan": "Not eligible",
+      "ayushman_bharat": "Need more info",
+      "pm_ujjwala": "Not eligible",
+      "atal_pension": "Eligible",
+      "up_kisan_durghatna": "Not eligible"
+    },
+    "note": "Young informal gig worker under 40, eligible for APY for guaranteed retirement."
+  },
+  {
+    "id": "persona_4",
+    "name": "Manju Bai",
+    "age": 45,
+    "gender": "female",
+    "occupation": "agricultural_laborer",
+    "annual_income": 55000,
+    "state": "Madhya Pradesh",
+    "landholding_hectares": 0.0,
+    "has_lpg_connection": false,
+    "is_income_tax_payer": false,
+    "category": "ST",
+    "expected": {
+      "pm_kisan": "Not eligible",
+      "ayushman_bharat": "Eligible",
+      "pm_ujjwala": "Eligible",
+      "atal_pension": "Not eligible",
+      "up_kisan_durghatna": "Not eligible"
+    },
+    "note": "Landless female agricultural laborer above 40 (APY cutoff passed, Ujjwala eligible)."
+  },
+  {
+    "id": "persona_5",
+    "name": "Dr. Aniruddh Sharma",
+    "age": 42,
+    "gender": "male",
+    "occupation": "salaried_professional",
+    "annual_income": 1400000,
+    "state": "Uttar Pradesh",
+    "landholding_hectares": 3.5,
+    "has_lpg_connection": true,
+    "is_income_tax_payer": true,
+    "category": "General",
+    "expected": {
+      "pm_kisan": "Not eligible",
+      "ayushman_bharat": "Not eligible",
+      "pm_ujjwala": "Not eligible",
+      "atal_pension": "Not eligible",
+      "up_kisan_durghatna": "Not eligible"
+    },
+    "note": "Income tax payer with high income; barred from welfare criteria."
+  },
+  {
+    "id": "persona_6",
+    "name": "Geeta Kurmi",
+    "age": 29,
+    "gender": "female",
+    "occupation": "farmer",
+    "annual_income": 110000,
+    "state": "Uttar Pradesh",
+    "landholding_hectares": 0.8,
+    "has_lpg_connection": true,
+    "is_income_tax_payer": false,
+    "category": "OBC",
+    "expected": {
+      "pm_kisan": "Eligible",
+      "ayushman_bharat": "Likely",
+      "pm_ujjwala": "Not eligible",
+      "atal_pension": "Eligible",
+      "up_kisan_durghatna": "Eligible"
+    },
+    "note": "Marginal female farmer owning 0.8 hectares in UP, qualifies for PM-KISAN, APY, UP Kisan Bima."
+  },
+  {
+    "id": "persona_7",
+    "name": "Kallu Ram",
+    "age": 62,
+    "gender": "male",
+    "occupation": "retired_laborer",
+    "annual_income": 40000,
+    "state": "Rajasthan",
+    "landholding_hectares": 0.0,
+    "has_lpg_connection": true,
+    "is_income_tax_payer": false,
+    "category": "SC",
+    "expected": {
+      "pm_kisan": "Not eligible",
+      "ayushman_bharat": "Eligible",
+      "pm_ujjwala": "Not eligible",
+      "atal_pension": "Not eligible",
+      "up_kisan_durghatna": "Not eligible"
+    },
+    "note": "Senior citizen (62) - exceeds APY entry age (max 40) but eligible for Ayushman Bharat."
+  },
+  {
+    "id": "persona_8",
+    "name": "Pooja Verma",
+    "age": 21,
+    "gender": "female",
+    "occupation": "student_freelancer",
+    "annual_income": 140000,
+    "state": "Haryana",
+    "landholding_hectares": 0.0,
+    "has_lpg_connection": true,
+    "is_income_tax_payer": false,
+    "category": "General",
+    "expected": {
+      "pm_kisan": "Not eligible",
+      "ayushman_bharat": "Need more info",
+      "pm_ujjwala": "Not eligible",
+      "atal_pension": "Eligible",
+      "up_kisan_durghatna": "Not eligible"
+    },
+    "note": "Young citizen eligible for starting early voluntary retirement savings via APY."
+  }
+]
