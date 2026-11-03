@@ -5,6 +5,7 @@ const ICON_VOL = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" st
 const ICON_RUPEE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-rupee" aria-hidden="true"><path d="M6 3h12"/><path d="M6 8h12"/><path d="m6 13 8.5 8"/><path d="M6 13h3"/><path d="M9 13c6.67 0 6.67-10 0-10"/></svg>';
 const ICON_CLAUSE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-doc" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>';
 const ICON_MIC_SM = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-mic-sm" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>';
+const CHECK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
 
 let currentLang = "hi-IN";
 let currentStep = 1;
@@ -26,6 +27,8 @@ let selectedPersona = null;
 let lastOcrData = null;
 let lastSchemes = [];
 let schemeSort = "rank";
+let lastReceiptData = null;
+let sessionRef = null;
 let lastWalkthroughScheme = "pm_kisan";
 
 // Localized data labels for names that come from the backend
@@ -134,6 +137,22 @@ const i18n = {
     bankText: "भारतीय स्टेट बैंक (आधार लिंक, DBT सक्रिय)",
     landUnit: "हेक्टेयर",
     finishMsg: "आवेदन विवरण नागरिक द्वारा सत्यापित किया गया है। आधिकारिक पोर्टल (pmkisan.gov.in) पर जमा करने हेतु मार्गदर्शन पूर्ण हुआ।",
+    finishHead: "आवेदन मार्गदर्शन पूर्ण",
+    finishStamp: "आवाज़ से सत्यापित",
+    rCitizen: "नागरिक",
+    rScheme: "योजना",
+    rAadhaar: "आधार संख्या",
+    rLand: "कृषि भूमि",
+    rBank: "बैंक खाता",
+    rClause: "सत्यापन प्राधिकरण",
+    rDate: "दिनांक व समय",
+    rRef: "संदर्भ आईडी",
+    rVerified: "सत्यापित",
+    rPrint: "पर्चा प्रिंट करें",
+    rCopy: "पर्चा कॉपी करें",
+    rCopied: "कॉपी हो गया ✓",
+    rFoot: "यह पर्चा सत्र में दिए मार्गदर्शन का प्रमाण है। औपचारिक आवेदन केवल आधिकारिक पोर्टल पर करें।",
+    btnFinishDone: "पर्चा तैयार ✓",
     btnBackSchemes: "परिणामों पर लौटें",
     btnFinishGuidance: "आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)",
     disclaimer: "अस्वीकरण: यह परिणाम केवल मार्गदर्शन के लिए हैं और आधिकारिक सरकारी निर्णय का प्रतिनिधित्व नहीं करते। लाभ के लिए अधिकृत पोर्टल पर आवेदन आवश्यक है।",
@@ -218,6 +237,22 @@ const i18n = {
     bankText: "State Bank of India (Aadhaar seeded, DBT enabled)",
     landUnit: "Hectares",
     finishMsg: "Application credentials confirmed by citizen. Guidance record prepared for formal submission on the PM-KISAN portal (pmkisan.gov.in).",
+    finishHead: "Application guidance complete",
+    finishStamp: "Voice verified",
+    rCitizen: "Citizen",
+    rScheme: "Scheme",
+    rAadhaar: "Aadhaar number",
+    rLand: "Cultivable land",
+    rBank: "Bank details",
+    rClause: "Verification basis",
+    rDate: "Date & time",
+    rRef: "Reference ID",
+    rVerified: "Verified",
+    rPrint: "Print receipt",
+    rCopy: "Copy receipt",
+    rCopied: "Copied ✓",
+    rFoot: "This receipt is proof of in-session guidance. Submit the formal application only on the official portal.",
+    btnFinishDone: "Receipt ready ✓",
     btnBackSchemes: "Back to results",
     btnFinishGuidance: "Finish application guidance (voice confirmed)",
     disclaimer: "Disclaimer: These outcomes are for guidance purposes and do not represent an official government determination. Formal application on designated government portals is required.",
@@ -321,8 +356,7 @@ function setLanguage(lang) {
   document.getElementById("lbl-form-state").innerText = t.lblFormState;
   document.getElementById("lbl-form-land").innerText = t.lblFormLand;
   document.getElementById("lbl-form-bank").innerText = t.lblFormBank;
-  document.getElementById("form-audit-box").innerHTML = t.formAudit;
-  document.getElementById("btn-back-schemes").innerText = t.btnBackSchemes;
+  document.getElementById("form-audit-box").innerHTML = t.formAudit;  document.getElementById("btn-back-schemes").innerText = t.btnBackSchemes;
   document.getElementById("btn-finish-guidance").innerText = t.btnFinishGuidance;
   document.getElementById("disclaimer-banner").innerText = t.disclaimer;
 
@@ -340,10 +374,15 @@ function setLanguage(lang) {
     renderDocFields(lastOcrData);
   }
   if (currentStep === 4) {
+    const wasReceiptActive = lastReceiptData !== null;
+    const preservedReceipt = lastReceiptData;
     fillFormWalkthrough();
-    const finishStatus = document.getElementById("finish-status");
-    if (finishStatus.classList.contains("active")) {
-      finishStatus.innerText = t.finishMsg;
+    const finishBtn = document.getElementById("btn-finish-guidance");
+    if (wasReceiptActive && preservedReceipt) {
+      renderFinishReceipt(preservedReceipt);
+      finishBtn.disabled = true;
+      finishBtn.classList.add("done");
+      finishBtn.innerText = t.btnFinishDone;
     }
   }
 
@@ -950,15 +989,99 @@ window.playAudio = async function(encodedText, preloadedUri) {
 function setupFormWalkthrough() {
   document.getElementById("btn-back-schemes").addEventListener("click", () => goToStep(3));
   document.getElementById("btn-finish-guidance").addEventListener("click", () => {
-    const status = document.getElementById("finish-status");
-    status.innerText = i18n[currentLang].finishMsg;
-    status.classList.add("active");
+    renderFinishReceipt(makeReceiptData());
+    const btn = document.getElementById("btn-finish-guidance");
+    btn.disabled = true;
+    btn.classList.add("done");
+    btn.innerText = i18n[currentLang].btnFinishDone;
   });
 }
+
+function makeReceiptData() {
+  if (!sessionRef) {
+    sessionRef = `SS-${new Date().getFullYear()}-${1000 + Math.floor(Math.random() * 9000)}`;
+  }
+  const scheme = lastSchemes.find(s => s.id === lastWalkthroughScheme) || null;
+  const locale = currentLang === "hi-IN" ? "hi-IN" : "en-IN";
+  return {
+    name: selectedPersona ? selectedPersona.name : "Ramesh Kumar Yadav",
+    scheme: scheme ? scheme.name : i18n[currentLang].formTitle,
+    aadhaar: document.getElementById("form-aadhaar").value || "XXXX-XXXX-9842",
+    land: document.getElementById("form-land").value,
+    bank: document.getElementById("form-bank").value,
+    clause: scheme ? scheme.clause_cited : "",
+    stamp: `${new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date())} IST`,
+    ref: sessionRef
+  };
+}
+
+function renderFinishReceipt(r) {
+  lastReceiptData = r;
+  const t = i18n[currentLang];
+  const status = document.getElementById("finish-status");
+  const vtag = `<span class="receipt-verified">${CHECK_SVG} ${t.rVerified}</span>`;
+  status.innerHTML = `
+    <div id="finish-receipt" class="finish-receipt">
+      <div class="receipt-head">
+        <span class="receipt-check">${CHECK_SVG}</span>
+        <div>
+          <div class="receipt-title">${t.finishHead}</div>
+          <div class="receipt-ref">${r.ref}</div>
+        </div>
+        <span class="receipt-stamp">${t.finishStamp}</span>
+      </div>
+      <dl class="receipt-rows">
+        <dt>${t.rCitizen}</dt><dd>${r.name}</dd>
+        <dt>${t.rScheme}</dt><dd>${r.scheme}</dd>
+        <dt>${t.rAadhaar}</dt><dd>${r.aadhaar}</dd>
+        <dt>${t.rLand}</dt><dd>${r.land} ${r.land ? vtag : ""}</dd>
+        <dt>${t.rBank}</dt><dd>${r.bank} ${r.bank ? vtag : ""}</dd>
+        <dt>${t.rClause}</dt><dd>${r.clause}</dd>
+        <dt>${t.rDate}</dt><dd>${r.stamp}</dd>
+      </dl>
+      <div class="receipt-note">${t.rFoot}</div>
+      <div class="receipt-actions no-print">
+        <button class="btn-secondary" onclick="window.print()">${t.rPrint}</button>
+        <button class="btn-secondary" id="btn-copy-receipt" onclick="copyReceipt(this)">${t.rCopy}</button>
+      </div>
+    </div>`;
+  status.classList.add("active", "plain");
+}
+
+window.copyReceipt = function(btn) {
+  if (!lastReceiptData) return;
+  const t = i18n[currentLang];
+  const r = lastReceiptData;
+  const text = [
+    `${t.finishHead} — ${r.ref}`,
+    `${t.rCitizen}: ${r.name}`,
+    `${t.rScheme}: ${r.scheme}`,
+    `${t.rAadhaar}: ${r.aadhaar}`,
+    `${t.rLand}: ${r.land}`,
+    `${t.rBank}: ${r.bank}`,
+    `${t.rClause}: ${r.clause}`,
+    `${t.rDate}: ${r.stamp}`,
+    t.rFoot
+  ].join("\n");
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerText = t.rCopied;
+    setTimeout(() => { btn.innerText = t.rCopy; }, 1600);
+  }).catch(() => {});
+};
 
 function fillFormWalkthrough() {
   const t = i18n[currentLang];
   const scheme = lastSchemes.find(s => s.id === lastWalkthroughScheme) || null;
+
+  // Fresh walkthrough — clear previous receipt and restore the finish button
+  lastReceiptData = null;
+  const finishStatus = document.getElementById("finish-status");
+  finishStatus.classList.remove("active", "plain");
+  finishStatus.innerHTML = "";
+  const finishBtn = document.getElementById("btn-finish-guidance");
+  finishBtn.disabled = false;
+  finishBtn.classList.remove("done");
+  finishBtn.innerText = t.btnFinishGuidance;
 
   // Print the actual selected scheme — name, benefit and cited clause
   document.getElementById("form-title").innerText = scheme
