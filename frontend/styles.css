@@ -208,6 +208,15 @@ header {
   padding: var(--space-2) var(--space-5);
   overflow-x: auto;
   white-space: nowrap;
+  transition: opacity 160ms ease;
+}
+
+.personas-bar.locked {
+  opacity: 0.45;
+}
+
+.personas-bar.locked .persona-pill {
+  pointer-events: none;
 }
 
 .personas-inner {
@@ -801,6 +810,36 @@ main {
 .sum-dot.dot-Need-more-info { background: var(--info-fg); }
 
 .dot-Eligible { background: var(--ok-fg); }
+
+/* ---------- Scheme sorter (eligible / rest) ---------- */
+.scheme-sorter {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: auto;
+  padding: 2px;
+  background: var(--paper-100);
+  border: 1px solid var(--border-quiet);
+  border-radius: var(--radius-pill);
+}
+
+.sort-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sort-btn:hover { background: var(--surface-dim); color: var(--text-primary); }
+.sort-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sort-btn.active { background: var(--ink); color: var(--paper-50); }
 
 /* ---------- Status accent on scheme cards ---------- */
 .scheme-card.st-Eligible { border-left: 3px solid var(--ok-fg); }

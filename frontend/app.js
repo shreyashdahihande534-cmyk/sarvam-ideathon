@@ -25,6 +25,7 @@ let personas = [];
 let selectedPersona = null;
 let lastOcrData = null;
 let lastSchemes = [];
+let schemeSort = "rank";
 let lastWalkthroughScheme = "pm_kisan";
 
 // Localized data labels for names that come from the backend
@@ -80,6 +81,11 @@ const i18n = {
     sumLikely: "संभावित रूप से पात्र",
     sumNot: "अपात्र",
     sumInfo: "अधिक जानकारी चाहिए",
+    sortAll: "सभी (पात्र पहले)",
+    sortEligible: "पात्र",
+    sortNot: "बाकी सारी योजनाएं",
+    sortEmpty: "इस विकल्प में कोई योजना नहीं।",
+    personasLock: "प्रोफाइल केवल होम पेज पर बदली जा सकती हैं",
     walkTitle: "स्वतः भरा हुआ आवेदन पत्र",
     formAuditLine2: "आधार बैंक खाते से डीबीटी (Direct Benefit Transfer) के लिए लिंक है।",
     micListening: "सुन रहा हूँ... बोलिए (Saaras v4)",
@@ -159,6 +165,11 @@ const i18n = {
     sumLikely: "Likely eligible",
     sumNot: "Not eligible",
     sumInfo: "Need more info",
+    sortAll: "All (eligible first)",
+    sortEligible: "Eligible",
+    sortNot: "The rest",
+    sortEmpty: "No schemes in this view.",
+    personasLock: "Profiles can be switched only on the home page",
     walkTitle: "Auto-prefilled application form",
     formAuditLine2: "Aadhaar is linked to bank account for DBT (Direct Benefit Transfer).",
     micListening: "Listening in English... Please speak (Saaras v4)",
@@ -242,9 +253,12 @@ function setLanguage(lang) {
   const t = i18n[lang];
 
   // Update text across UI
+  schemeSort = "rank";
   document.getElementById("brand-title").innerText = t.brandTitle;
   document.getElementById("app-subtitle").innerText = t.subtitle;
   document.getElementById("personas-heading").innerText = t.personasHeading;
+  const pbarLang = document.querySelector(".personas-bar");
+  if (pbarLang) pbarLang.title = currentStep !== 1 ? t.personasLock : "";
   document.getElementById("privacy-text").innerHTML = t.privacyText;
 
   document.getElementById("step-label-1").innerText = t.step1;
@@ -382,7 +396,10 @@ function renderPersonaPills() {
     const isActive = selectedPersona ? selectedPersona.id === p.id : idx === 0;
     btn.className = `persona-pill ${isActive ? "active" : ""}`;
     btn.innerText = `${p.name} (${localizedPersonaMeta(p)})`;
-    btn.onclick = () => selectPersona(p, btn);
+    btn.onclick = () => {
+      if (currentStep !== 1) return;
+      selectPersona(p, btn);
+    };
     ribbon.appendChild(btn);
   });
 }
@@ -472,6 +489,9 @@ function bindFormInputs() {
 
 function goToStep(step) {
   currentStep = step;
+  const pbar = document.querySelector(".personas-bar");
+  pbar.classList.toggle("locked", step !== 1);
+  pbar.title = step !== 1 ? i18n[currentLang].personasLock : "";
   [1, 2, 3, 4].forEach(s => {
     const item = document.getElementById(`step-item-${s}`);
     item.classList.toggle("active", s === step);
@@ -818,11 +838,27 @@ function renderSchemes(schemes) {
       ${sumMeta.filter(m => m[1] > 0).map(([key, n, label, dot]) =>
         `<span class="sum-chip"><span class="sum-dot ${dot}"></span>${n} ${label}</span>`
       ).join("")}
+      <div class="scheme-sorter" role="group" aria-label="Sort schemes">
+        <button class="sort-btn ${schemeSort === "rank" ? "active" : ""}" onclick="setSchemeSort('rank')">${t.sortAll}</button>
+        <button class="sort-btn ${schemeSort === "eligible" ? "active" : ""}" onclick="setSchemeSort('eligible')">${t.sortEligible} (${counts["Eligible"]})</button>
+        <button class="sort-btn ${schemeSort === "not" ? "active" : ""}" onclick="setSchemeSort('not')">${t.sortNot} (${schemes.length - counts["Eligible"]})</button>
+      </div>
     </div>`;
+
+  const statusRank = { "Eligible": 0, "Likely": 1, "Need more info": 2, "Not eligible": 3 };
+  const visible = schemes
+    .filter(s =>
+      schemeSort === "eligible" ? s.status === "Eligible" :
+      schemeSort === "not" ? s.status !== "Eligible" : true)
+    .sort((a, b) => (statusRank[a.status] ?? 9) - (statusRank[b.status] ?? 9));
 
   let html = summary;
 
-  schemes.forEach((s) => {
+  if (visible.length === 0) {
+    html += `<div class="note-loading"><div class="note-title">${t.sortEmpty}</div></div>`;
+  }
+
+  visible.forEach((s) => {
     const statusClass = `status-${s.status.replace(/\s+/g, '-')}`;
     const cardClass = `scheme-card st-${s.status.replace(/\s+/g, '-')}`;
     html += `
@@ -863,6 +899,11 @@ function renderSchemes(schemes) {
 
   container.innerHTML = html;
 }
+
+window.setSchemeSort = function(sortKey) {
+  schemeSort = sortKey;
+  if (lastSchemes.length > 0) renderSchemes(lastSchemes);
+};
 
 window.playAudio = async function(encodedText, preloadedUri) {
   if (currentAudio) {
