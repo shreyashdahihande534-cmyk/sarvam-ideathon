@@ -12,7 +12,13 @@
   <header>
     <div class="top-bar">
       <div class="brand">
-        <div class="chakra-badge">☸</div>
+        <div class="chakra-badge" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-chakra">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>
+            <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
         <div class="brand-text">
           <h1 id="brand-title">सरकारी सहायक (Sarkari Sahayak)</h1>
           <p id="app-subtitle">आवाज से जानें अपनी सरकारी योजनाएं और करें आवेदन</p>
@@ -21,66 +27,82 @@
       <div class="controls">
         <button id="btn-hi" class="lang-btn active">हिंदी</button>
         <button id="btn-en" class="lang-btn">English</button>
+        <button id="btn-theme" class="lang-btn lang-btn-icon" aria-label="Dark mode" style="padding:6px 10px;">
+          <span id="theme-icon"></span>
+        </button>
       </div>
     </div>
+    <div class="tricolor" aria-hidden="true"></div>
   </header>
 
-  <!-- Personas Ribbon for 1-Click Evaluation -->
+  <!-- Personas ribbon for 1-click evaluation -->
   <div class="personas-bar">
     <div class="personas-inner">
-      <span class="personas-label" id="personas-heading">Demo Personas:</span>
-      <div id="personas-list" style="display:inline-flex; gap:8px;"></div>
+      <span class="personas-label" id="personas-heading">Demo profiles:</span>
+      <div id="personas-list"></div>
     </div>
   </div>
 
   <main>
-    <!-- Privacy & Guidance Disclaimer -->
+    <!-- Privacy & guidance notice -->
     <div class="privacy-banner">
-      <span style="font-size:1.2rem;">🔒</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-shield" aria-hidden="true">
+        <path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10Z"/>
+        <path d="m9 11 2 2 4-4"/>
+      </svg>
       <div id="privacy-text">
         <strong>गोपनीयता सूचना (Privacy Protected):</strong> आधार संख्या और व्यक्तिगत दस्तावेज़ केवल इस सत्र के लिए मेमोरी में संसाधित होते हैं। कोई भी पहचानकर्ता स्थायी रूप से संग्रहीत नहीं किया जाता।
       </div>
     </div>
 
-    <!-- Stepper Navigation -->
+    <!-- Stepper navigation -->
     <div class="stepper">
       <div class="step-item active" id="step-item-1">
         <span class="step-num">1</span>
-        <span id="step-label-1">1. आवाज साक्षात्कार</span>
+        <span id="step-label-1">आवाज साक्षात्कार</span>
       </div>
       <div class="step-item" id="step-item-2">
         <span class="step-num">2</span>
-        <span id="step-label-2">2. दस्तावेज़ सत्यापन</span>
+        <span id="step-label-2">दस्तावेज़ सत्यापन</span>
       </div>
       <div class="step-item" id="step-item-3">
         <span class="step-num">3</span>
-        <span id="step-label-3">3. योजना परिणाम</span>
+        <span id="step-label-3">योजना परिणाम</span>
       </div>
       <div class="step-item" id="step-item-4">
         <span class="step-num">4</span>
-        <span id="step-label-4">4. आवेदन सहायता</span>
+        <span id="step-label-4">आवेदन सहायता</span>
       </div>
     </div>
 
-    <!-- STEP 1: Voice Interview -->
+    <!-- STEP 1: Voice interview -->
     <section class="card" id="step-card-1">
-      <div class="voice-hero">
-        <button class="mic-circle" id="mic-btn" title="Click to speak">
-          🎙️
+      <div class="voice-stage">
+        <svg class="stage-chakra" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>
+          <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+        </svg>
+        <button class="mic-circle" id="mic-btn" title="Click to speak" aria-label="Tap to speak">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-mic" aria-hidden="true">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <path d="M12 19v3"/>
+          </svg>
         </button>
-        <div class="wave-animation">
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
-          <div class="wave-bar"></div>
+        <div id="waveviz" class="wave-animation" aria-hidden="true">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
         </div>
-        <p id="mic-prompt-text" style="font-weight:600; margin-top:12px; color:#334155;">बोलने के लिए माइक दबाएं या नीचे विवरण भरें</p>
-        <p id="interview-status" style="font-size:0.85rem; color:#64748b; margin-top:6px; min-height:20px;"></p>
+        <div id="record-timer" class="record-timer" hidden>00:00</div>
+        <p id="mic-prompt-text" class="mic-hint">बोलने के लिए माइक दबाएं या नीचे विवरण भरें</p>
+        <p id="interview-status" class="interview-status"></p>
       </div>
 
-      <div style="border-top: 1px solid var(--border); padding-top:16px;">
-        <h3 id="profile-heading" style="font-size:0.95rem; font-weight:700; color:#334155; margin-bottom:12px;">नागरिक विवरण (Citizen Profile)</h3>
+      <div class="section-divider">
+        <h3 id="profile-heading" class="card-heading">नागरिक विवरण (Citizen Profile)</h3>
         <div class="form-grid">
           <div class="input-group">
             <label id="lbl-age">उम्र (Age):</label>
@@ -147,71 +169,84 @@
           </div>
         </div>
 
-        <div style="text-align:right; margin-top:24px;">
+        <div class="form-actions">
           <button class="btn-primary" id="btn-check">
-            दस्तावेज़ सत्यापन पर आगे बढ़ें →
+            दस्तावेज़ सत्यापन पर आगे बढ़ें
           </button>
         </div>
       </div>
     </section>
 
-    <!-- STEP 2: Document Verification (Sarvam Vision) -->
+    <!-- STEP 2: Document verification (Sarvam Vision) -->
     <section class="card" id="step-card-2" style="display:none;">
-      <h2 id="doc-title" style="font-size:1.15rem; font-weight:700; margin-bottom:6px;">दस्तावेज़ सत्यापन (Sarvam Vision OCR)</h2>
-      <p id="doc-subtitle" style="font-size:0.85rem; color:#64748b; margin-bottom:18px;">
+      <h2 id="doc-title" class="step-heading">दस्तावेज़ सत्यापन (Sarvam Vision OCR)</h2>
+      <p id="doc-subtitle" class="step-subtitle step-subheading">
         सटीक पात्रता के लिए आधार कार्ड और आय प्रमाण पत्र का स्वचालित विश्लेषण। 80% से कम आत्मविश्वास वाले क्षेत्रों की आवाज द्वारा पुष्टि की जाती है।
       </p>
 
-      <div style="display:flex; gap:12px; margin-bottom:18px;">
+      <div class="doc-actions">
         <button class="btn-secondary" id="btn-doc-aadhaar">
-          📄 नमूना आधार कार्ड अपलोड करें
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-file" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <path d="M14 2v6h6"/>
+          </svg>
+          <span id="span-doc-aadhaar">नमूना आधार कार्ड अपलोड करें</span>
         </button>
         <button class="btn-secondary" id="btn-doc-income">
-          📜 नमूना आय प्रमाण पत्र अपलोड करें
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-file-text" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <path d="M14 2v6h6"/>
+            <path d="M8 13h8M8 17h5"/>
+          </svg>
+          <span id="span-doc-income">नमूना आय प्रमाण पत्र अपलोड करें</span>
         </button>
       </div>
 
       <div id="ocr-results">
-        <div id="ocr-empty-placeholder" style="text-align:center; padding:24px; color:#94a3b8; border:1px dashed #cbd5e1; border-radius:12px;">
-          ऊपर दिए गए बटन से कोई भी दस्तावेज़ स्कैन करें।
-        </div>
+        <div id="ocr-empty-placeholder">ऊपर दिए गए बटन से कोई भी दस्तावेज़ स्कैन करें।</div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; margin-top:24px;">
-        <button class="btn-secondary" id="btn-back-step1" onclick="goToStep(1)">← साक्षात्कार पर वापस जाएं</button>
+      <div class="row-split">
+        <button class="btn-secondary" id="btn-back-step1" onclick="goToStep(1)">साक्षात्कार पर वापस जाएं</button>
         <button class="btn-primary" id="btn-proceed-results" style="display:none;">
-          योजना पात्रता परिणाम देखें →
+          योजना पात्रता परिणाम देखें
         </button>
       </div>
     </section>
 
-    <!-- STEP 3: Eligibility Results Dashboard -->
+    <!-- STEP 3: Eligibility results dashboard -->
     <section class="card" id="step-card-3" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div class="row-split" style="margin:0; justify-content:space-between; margin-bottom:16px; align-items:flex-start;">
         <div>
-          <h2 id="results-title" style="font-size:1.2rem; font-weight:700;">आपकी कल्याणकारी योजनाएं (5 Schemes Evaluated)</h2>
-          <p id="results-subtitle" style="font-size:0.85rem; color:#64748b;">नियम-आधारित सत्यापन + Sarvam-105B स्पष्टीकरण + Bulbul v3 आवाज</p>
+          <h2 id="results-title" class="step-heading">आपकी कल्याणकारी योजनाएं (5 योजनाओं का मूल्यांकन)</h2>
+          <p id="results-subtitle" class="step-subheading" style="margin-bottom:0;">नियम-आधारित सत्यापन + Sarvam-105B स्पष्टीकरण + Bulbul v3 आवाज</p>
         </div>
-        <button class="btn-secondary" id="btn-recheck" onclick="runEligibilityCheck()">🔄 पुनः जांचें</button>
+        <button class="btn-secondary" id="btn-recheck" onclick="runEligibilityCheck()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-refresh" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-2.6-6.4"/>
+            <path d="M21 3v5h-5"/>
+          </svg>
+          <span id="span-recheck">पुनः जांचें</span>
+        </button>
       </div>
 
       <div class="schemes-list" id="schemes-container">
         <!-- Rendered by JS -->
       </div>
 
-      <div style="margin-top:24px; text-align:left;">
-        <button class="btn-secondary" id="btn-back-step2" onclick="goToStep(2)">← दस्तावेज़ पर वापस जाएं</button>
+      <div class="row-split" style="justify-content:flex-start;">
+        <button class="btn-secondary" id="btn-back-step2" onclick="goToStep(2)">दस्तावेज़ पर वापस जाएं</button>
       </div>
     </section>
 
-    <!-- STEP 4: Form-Filling Walkthrough -->
+    <!-- STEP 4: Form-filling walkthrough -->
     <section class="card" id="step-card-4" style="display:none;">
-      <div style="border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:18px;">
-        <h2 id="form-title" style="font-size:1.2rem; font-weight:700; color:var(--navy);">PM-KISAN आवेदन पत्र (स्वतः भरा हुआ मार्गदर्शन)</h2>
-        <p id="form-subtitle" style="font-size:0.85rem; color:#64748b;">सत्यापित आधार और आय विवरण से स्वतः तैयार किया गया आवेदन पत्र।</p>
+      <div class="section-divider" style="border-top:none; padding-top:0;">
+        <h2 id="form-title" class="step-heading">PM-KISAN आवेदन पत्र (स्वतः भरा हुआ मार्गदर्शन)</h2>
+        <p id="form-subtitle" class="step-subheading">सत्यापित आधार और आय विवरण से स्वतः तैयार किया गया आवेदन पत्र।</p>
       </div>
 
-      <div class="form-grid">
+      <div class="form-grid" style="margin-top:0;">
         <div class="input-group">
           <label id="lbl-form-name">आवेदक का पूरा नाम (Full Name):</label>
           <input type="text" id="form-name" readonly>
@@ -234,17 +269,18 @@
         </div>
       </div>
 
-      <div id="form-audit-box" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:14px; border-radius:10px; margin:20px 0; color:#166534; font-size:0.88rem;">
-        ✓ सभी 5 पात्रता मानदंड PM-KISAN धारा 2.1 के अनुसार सत्यापित हैं।<br>
-        ✓ आधार बैंक खाते से डीबीटी (Direct Benefit Transfer) के लिए लिंक है।
+      <div id="form-audit-box" class="audit-box">
+        सभी 5 पात्रता मानदंड PM-KISAN धारा 2.1 के अनुसार सत्यापित हैं।<br>
+        आधार बैंक खाते से डीबीटी (Direct Benefit Transfer) के लिए लिंक है।
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button class="btn-secondary" id="btn-back-schemes">← परिणामों पर लौटें</button>
+      <div class="row-split">
+        <button class="btn-secondary" id="btn-back-schemes">परिणामों पर लौटें</button>
         <button class="btn-primary" id="btn-finish-guidance">
-          ✓ आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)
+          आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)
         </button>
       </div>
+      <div id="finish-status"></div>
     </section>
 
     <div class="disclaimer-text" id="disclaimer-banner">

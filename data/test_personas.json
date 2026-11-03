@@ -18,7 +18,8 @@
       "atal_pension": "Eligible",
       "up_kisan_durghatna": "Eligible"
     },
-    "note": "Small farmer in UP with cultivable land under 2 ha and income under 1 Lakh."
+    "note": "Small farmer in UP with cultivable land under 2 ha and income under 1 Lakh.",
+    "note_hi": "उत्तर प्रदेश के छोटे किसान, 2 हेक्टेयर से कम कृषि भूमि और 1 लाख से कम आय।"
   },
   {
     "id": "persona_2",
@@ -39,7 +40,8 @@
       "atal_pension": "Eligible",
       "up_kisan_durghatna": "Not eligible"
     },
-    "note": "Adult woman in low-income SC household without LPG connection."
+    "note": "Adult woman in low-income SC household without LPG connection.",
+    "note_hi": "एससी वर्ग के कम आय वाले परिवार की वयस्क महिला, LPG कनेक्शन नहीं।"
   },
   {
     "id": "persona_3",
@@ -60,7 +62,8 @@
       "atal_pension": "Eligible",
       "up_kisan_durghatna": "Not eligible"
     },
-    "note": "Young informal gig worker under 40, eligible for APY for guaranteed retirement."
+    "note": "Young informal gig worker under 40, eligible for APY for guaranteed retirement.",
+    "note_hi": "40 साल से कम उम्र का अनौपचारिक गिग कर्मी, गारंटेड पेंशन के लिए APY का पात्र।"
   },
   {
     "id": "persona_4",
@@ -81,7 +84,8 @@
       "atal_pension": "Not eligible",
       "up_kisan_durghatna": "Not eligible"
     },
-    "note": "Landless female agricultural laborer above 40 (APY cutoff passed, Ujjwala eligible)."
+    "note": "Landless female agricultural laborer above 40 (APY cutoff passed, Ujjwala eligible).",
+    "note_hi": "40 वर्ष से अधिक आयु की भूमिहीन महिला कृषि मजदूर (APY सीमा पार, उज्ज्वला के लिए पात्र)।"
   },
   {
     "id": "persona_5",
@@ -102,7 +106,8 @@
       "atal_pension": "Not eligible",
       "up_kisan_durghatna": "Not eligible"
     },
-    "note": "Income tax payer with high income; barred from welfare criteria."
+    "note": "Income tax payer with high income; barred from welfare criteria.",
+    "note_hi": "करदाता और उच्च आय वर्ग; कल्याणकारी मानदंडों से वंचित।"
   },
   {
     "id": "persona_6",
@@ -123,7 +128,8 @@
       "atal_pension": "Eligible",
       "up_kisan_durghatna": "Eligible"
     },
-    "note": "Marginal female farmer owning 0.8 hectares in UP, qualifies for PM-KISAN, APY, UP Kisan Bima."
+    "note": "Marginal female farmer owning 0.8 hectares in UP, qualifies for PM-KISAN, APY, UP Kisan Bima.",
+    "note_hi": "उत्तर प्रदेश में 0.8 हेक्टेयर भूमि की सीमांत महिला किसान; PM-KISAN, APY, UP किसान बीमा की पात्र।"
   },
   {
     "id": "persona_7",
@@ -144,7 +150,8 @@
       "atal_pension": "Not eligible",
       "up_kisan_durghatna": "Not eligible"
     },
-    "note": "Senior citizen (62) - exceeds APY entry age (max 40) but eligible for Ayushman Bharat."
+    "note": "Senior citizen (62) - exceeds APY entry age (max 40) but eligible for Ayushman Bharat.",
+    "note_hi": "वरिष्ठ नागरिक (62 वर्ष) - APY प्रवेश आयु (अधिकतम 40) पार, पर आयुष्मान भारत के पात्र।"
   },
   {
     "id": "persona_8",
@@ -165,6 +172,7 @@
       "atal_pension": "Eligible",
       "up_kisan_durghatna": "Not eligible"
     },
-    "note": "Young citizen eligible for starting early voluntary retirement savings via APY."
+    "note": "Young citizen eligible for starting early voluntary retirement savings via APY.",
+    "note_hi": "APY के माध्यम से जल्दी स्वैच्छिक सेवानिवृत्ति बचत शुरू करने के योग्य युवा नागरिक।"
   }
 ]

@@ -38,6 +38,46 @@ def load_personas_data():
     with open(PERSONAS_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
+# --- Result field localization (rules engine emits English; UI needs Hindi too) ---
+STATUS_HI = {
+    "Eligible": "पात्र",
+    "Likely": "संभावित रूप से पात्र",
+    "Not eligible": "अपात्र",
+    "Need more info": "अधिक जानकारी आवश्यक",
+}
+
+DOCS_HI = {
+    "Land Record (Khatauni / RoR)": "भूमि अभिलेख (खतौनी / RoR)",
+    "Aadhaar Linked Bank Account": "आधार से लिंक्ड बैंक खाता",
+    "Ration Card (BPL/NFSA/Antyodaya)": "राशन कार्ड (BPL/NFSA/Antyodaya)",
+    "Family Aadhaar Cards": "परिवार के सदस्यों के आधार कार्ड",
+    "Valid State Ration Card": "राज्य का वैध राशन कार्ड",
+    "State NFSA Ration Card": "राज्य NFSA राशन कार्ड",
+    "UP Domicile Certificate": "यूपी निवास प्रमाण पत्र",
+    "Khatauni or Shramik Card": "खतौनी या श्रमिक कार्ड",
+    "Bank Savings Account Passbook / Auto-debit Mandate": "बचत बैंक खाता पासबुक / ऑटो-डेबिट अनुमंदन",
+    "Bank Savings Account Passbook": "बचत बैंक खाता पासबुक",
+    "BPL Ration Card or 14-point Annexure I declaration": "BPL राशन कार्ड या 14-सूत्रीय अनुलग्नक-I घोषणा",
+    "Bank Passbook": "बैंक पासबुक",
+    "Income Certificate or BPL Card": "आय प्रमाण पत्र या BPL कार्ड",
+}
+
+CLAUSE_HI = {
+    "PM-KISAN Guidelines 2019, Section 2.1 & Exclusion Clause 3.1": "PM-KISAN दिशानिर्देश 2019, धारा 2.1 एवं वर्जन खंड 3.1",
+    "PM-JAY National Health Agency Guidelines 2018 (SECC Deprivation D1-D7 Criteria)": "PM-JAY राष्ट्रीय स्वास्थ्य एजेंसी दिशानिर्देश 2018 (SECC वंचन D1-D7 मानदंड)",
+    "Pradhan Mantri Ujjwala Yojana 2.0 Guidelines (MoPNG 2021, Clause 3)": "प्रधानमंत्री उज्ज्वला योजना 2.0 दिशानिर्देश (MoPNG 2021, खंड 3)",
+    "PFRDA (Atal Pension Yojana) Regulations 2015, Regulation 3 (Entry Age 18-40 Years)": "PFRDA (अटल पेंशन योजना) विनियम 2015, विनियम 3 (प्रवेश आयु 18-40 वर्ष)",
+    "UP Revenue Dept Order No. 451/2020 (Mukhyamantri Kisan Evam Sarvhit Durghatna Kalyan Yojana)": "यूपी राजस्व विभाग आदेश सं. 451/2020 (मुख्यमंत्री किसान एवं सर्वहित दुर्घटना कल्याण योजना)",
+}
+
+def localize_result_fields(entry: Dict[str, Any], language: str) -> Dict[str, Any]:
+    status = entry.get("status", "")
+    if "hi" in language:
+        entry["status_label"] = STATUS_HI.get(status, status)
+    else:
+        entry["status_label"] = status
+    return entry
+
 class ProfilePayload(BaseModel):
     age: int
     gender: Optional[str] = "male"
@@ -77,9 +117,19 @@ def check_eligibility(payload: ProfilePayload):
 
     for s in schemes:
         rule_res = evaluate_scheme_eligibility(profile_dict, s["id"])
+
+        # Localize the rule result before the explainer composes with it
+        rule_res_local = dict(rule_res)
+        if "hi" in language:
+            rule_res_local["clause_cited"] = CLAUSE_HI.get(
+                rule_res_local.get("clause_cited", ""), rule_res_local.get("clause_cited", ""))
+            rule_res_local["missing_documents"] = [
+                DOCS_HI.get(d, d) for d in rule_res_local.get("missing_documents", [])
+            ]
+
         explanation = generate_conversational_explanation(
             scheme_info=s,
-            rule_result=rule_res,
+            rule_result=rule_res_local,
             profile=profile_dict,
             language=language
         )
@@ -104,10 +154,12 @@ def check_eligibility(payload: ProfilePayload):
             "status": rule_res["status"],
             "reason": rule_res["reason_hi"] if "hi" in language else rule_res["reason"],
             "explanation": explanation,
-            "clause_cited": rule_res["clause_cited"],
-            "missing_documents": rule_res["missing_documents"],
+            "clause_cited": rule_res_local["clause_cited"],
+            "missing_documents": rule_res_local["missing_documents"],
             "audio_uri": audio_uri
         })
+
+        localize_result_fields(results[-1], language)
 
     return {
         "profile": profile_dict,
