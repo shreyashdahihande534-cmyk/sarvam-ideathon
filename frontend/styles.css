@@ -1139,49 +1139,6 @@ main {
   margin-top: var(--space-3);
 }
 
-.listen-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  padding: 6px 14px;
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--text-main);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background-color var(--dur-fast) var(--ease-out);
-}
-
-.listen-btn:hover {
-  background: var(--surface-dim);
-}
-
-.listen-btn.playing {
-  border-color: var(--accent);
-  color: var(--accent-strong);
-  cursor: progress;
-}
-
-.listen-btn.playing svg {
-  color: var(--accent-strong);
-}
-
-.listen-btn svg {
-  color: var(--text-secondary);
-}
-
-.tts-note {
-  margin-bottom: var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-border);
-  color: var(--warn-fg);
-  border-radius: var(--radius-control);
-  font-size: var(--fs-sm);
-}
-
 .btn-apply {
   padding: 7px 14px;
   font-size: var(--fs-sm);

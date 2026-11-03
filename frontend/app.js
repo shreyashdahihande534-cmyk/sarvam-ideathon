@@ -1,7 +1,6 @@
 // Sarkari Sahayak Frontend Controller
 
 // Inline icon set (lucide shapes, one stroke, one size)
-const ICON_VOL = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-volume" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const ICON_RUPEE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-rupee" aria-hidden="true"><path d="M6 3h12"/><path d="M6 8h12"/><path d="m6 13 8.5 8"/><path d="M6 13h3"/><path d="M9 13c6.67 0 6.67-10 0-10"/></svg>';
 const ICON_CLAUSE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-doc" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>';
 const ICON_MIC_SM = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon-mic-sm" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>';
@@ -155,13 +154,10 @@ const i18n = {
     btnFinishDone: "पर्चा तैयार ✓",
     themeDark: "डार्क मोड",
     themeLight: "लाइट मोड",
-    listenPlaying: "बज रहा है…",
-    ttsUnavailable: "इस ब्राउज़र में आवाज़ उपलब्ध नहीं है।",
     btnBackSchemes: "परिणामों पर लौटें",
     btnFinishGuidance: "आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)",
     disclaimer: "अस्वीकरण: यह परिणाम केवल मार्गदर्शन के लिए हैं और आधिकारिक सरकारी निर्णय का प्रतिनिधित्व नहीं करते। लाभ के लिए अधिकृत पोर्टल पर आवेदन आवश्यक है।",
-    listen: "सुनें",
-    repeat: "दोबारा सुनें",
+
     viewGuide: "आवेदन गाइड देखें",
     missingDocs: "आवश्यक दस्तावेज़:",
     voiceConfirmed: "आवाज द्वारा सत्यापित (Voice Confirmed)",
@@ -259,13 +255,9 @@ const i18n = {
     btnFinishDone: "Receipt ready ✓",
     themeDark: "Dark mode",
     themeLight: "Light mode",
-    listenPlaying: "Playing…",
-    ttsUnavailable: "Voice is not available in this browser.",
     btnBackSchemes: "Back to results",
     btnFinishGuidance: "Finish application guidance (voice confirmed)",
     disclaimer: "Disclaimer: These outcomes are for guidance purposes and do not represent an official government determination. Formal application on designated government portals is required.",
-    listen: "Listen",
-    repeat: "Repeat",
     viewGuide: "View application guide",
     missingDocs: "Required Documents:",
     voiceConfirmed: "Verified via Voice",
@@ -967,16 +959,13 @@ function renderSchemes(schemes) {
           </div>
         ` : ''}
 
-        <div class="audio-controls">
-          <button class="listen-btn" onclick="playAudio('${encodeURIComponent(s.explanation)}', '${s.audio_uri || ''}', this)">
-            ${ICON_VOL} ${t.listen}
-          </button>
-          ${s.status === 'Eligible' ? `
+        ${s.status === 'Eligible' ? `
+          <div class="audio-controls">
             <button class="btn-primary btn-apply" onclick="startFormWalkthrough('${s.id}')">
               ${t.viewGuide}
             </button>
-          ` : ''}
-        </div>
+          </div>
+        ` : ''}
       </div>
     `;
   });
@@ -987,172 +976,6 @@ function renderSchemes(schemes) {
 window.setSchemeSort = function(sortKey) {
   schemeSort = sortKey;
   if (lastSchemes.length > 0) renderSchemes(lastSchemes);
-};
-
-let currentListenBtn = null;
-
-function setListenPlaying(btn, playing) {
-  if (!btn || btn._origHTML === undefined) {
-    if (btn) btn._origHTML = btn.innerHTML;
-  }
-  const t = i18n[currentLang];
-  if (playing) {
-    if (currentListenBtn && currentListenBtn !== btn) {
-      currentListenBtn.innerHTML = currentListenBtn._origHTML;
-      currentListenBtn._origHTML = undefined;
-    }
-    currentListenBtn = btn;
-    btn.innerHTML = `${ICON_VOL} ${t.listenPlaying}`;
-    btn.classList.add("playing");
-  } else {
-    btn.innerHTML = btn._origHTML;
-    btn._origHTML = undefined;
-    btn.classList.remove("playing");
-    if (currentListenBtn === btn) currentListenBtn = null;
-  }
-}
-
-function stopAllAudio() {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-  }
-  if ("speechSynthesis" in window) {
-    try { window.speechSynthesis.cancel(); } catch (e) {}
-  }
-}
-
-function findVoiceForLang() {
-  const voices = window.speechSynthesis.getVoices();
-  const base = currentLang.split("-")[0].toLowerCase();
-  return voices.find(v => v.lang.replace("_", "-").toLowerCase() === currentLang.toLowerCase())
-      || voices.find(v => v.lang.replace("_", "-").toLowerCase().startsWith(base))
-      || null;
-}
-
-function loadVoices(timeoutMs) {
-  return new Promise(resolve => {
-    const synth = window.speechSynthesis;
-    const immediate = synth.getVoices();
-    if (immediate.length > 0) { resolve(); return; }
-    const timer = setTimeout(resolve, timeoutMs);
-    synth.addEventListener("voiceschanged", () => {
-      clearTimeout(timer);
-      resolve();
-    }, { once: true });
-  });
-}
-
-function speakWithBrowser(text, btn) {
-  const t = i18n[currentLang];
-  if (!("speechSynthesis" in window)) {
-    stopAllAudio();
-    if (btn) setListenPlaying(btn, false);
-    playAudioNotice(t.ttsUnavailable);
-    return;
-  }
-  loadVoices(500).then(() => {
-    // Chrome quirk: a synchronous speak() right after cancel() gets swallowed — give it a beat
-    setTimeout(() => {
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = currentLang;
-      const voice = findVoiceForLang();
-      if (voice) utter.voice = voice;
-      utter.onend = () => { if (btn) setListenPlaying(btn, false); };
-      utter.onerror = () => { if (btn) setListenPlaying(btn, false); };
-      try {
-        window.speechSynthesis.speak(utter);
-        // Nudge Chrome out of a paused state, then re-release if it silently stuck
-        setTimeout(() => {
-          try { window.speechSynthesis.resume(); } catch (e) {}
-        }, 80);
-      } catch (e) {
-        if (btn) setListenPlaying(btn, false);
-        playAudioNotice(t.ttsUnavailable);
-        return;
-      }
-      // Safety: revert only when synthesis truly never started
-      setTimeout(() => {
-        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending && btn && currentListenBtn === btn) {
-          setListenPlaying(btn, false);
-          playAudioNotice(t.ttsUnavailable);
-        }
-      }, 1400);
-    }, 60);
-  });
-}
-
-function playAudioNotice(text) {
-  if (!text) return;
-  const el = document.createElement("div");
-  el.className = "tts-note";
-  el.innerText = text;
-  const box = document.getElementById("schemes-container");
-  box.prepend(el);
-  setTimeout(() => el.remove(), 3500);
-}
-
-window.playAudio = async function(encodedText, preloadedUri, btn) {
-  stopAllAudio();
-  setListenPlaying(btn, true);
-
-  let audioSrc = (preloadedUri && preloadedUri.startsWith("data:audio")) ? preloadedUri : null;
-  const text = decodeURIComponent(encodedText);
-
-  if (!audioSrc) {
-    try {
-      const res = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: text,
-          language: currentLang,
-          speaker: currentLang === "en-IN" ? "simran" : "ritu"
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.audio_uri && data.audio_uri.startsWith("data:audio")) {
-          audioSrc = data.audio_uri;
-        }
-      }
-    } catch (e) {
-      console.error("TTS fetch note:", e);
-    }
-  }
-
-  if (!audioSrc) {
-    try {
-      const resLocal = await fetch("/api/tts/local", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text, language: currentLang })
-      });
-      if (resLocal.ok) {
-        const dataLocal = await resLocal.json();
-        if (dataLocal.audio_uri && dataLocal.audio_uri.startsWith("data:audio")) {
-          audioSrc = dataLocal.audio_uri;
-        }
-      }
-    } catch (e) {
-      console.error("Local TTS note:", e);
-    }
-  }
-
-  if (audioSrc) {
-    currentAudio = new Audio(audioSrc);
-    currentAudio.onended = () => { if (btn) setListenPlaying(btn, false); };
-    currentAudio.onerror = () => {
-      if (btn) setListenPlaying(btn, false);
-      speakWithBrowser(text, btn);
-    };
-    currentAudio.play().catch(() => {
-      if (btn) setListenPlaying(btn, false);
-      speakWithBrowser(text, btn);
-    });
-  } else {
-    speakWithBrowser(text, btn);
-  }
 };
 
 // Form Walkthrough
