@@ -155,6 +155,8 @@ const i18n = {
     btnFinishDone: "पर्चा तैयार ✓",
     themeDark: "डार्क मोड",
     themeLight: "लाइट मोड",
+    listenPlaying: "बज रहा है…",
+    ttsUnavailable: "इस ब्राउज़र में आवाज़ उपलब्ध नहीं है।",
     btnBackSchemes: "परिणामों पर लौटें",
     btnFinishGuidance: "आवेदन मार्गदर्शन पूर्ण करें (Voice Confirmed)",
     disclaimer: "अस्वीकरण: यह परिणाम केवल मार्गदर्शन के लिए हैं और आधिकारिक सरकारी निर्णय का प्रतिनिधित्व नहीं करते। लाभ के लिए अधिकृत पोर्टल पर आवेदन आवश्यक है।",
@@ -257,6 +259,8 @@ const i18n = {
     btnFinishDone: "Receipt ready ✓",
     themeDark: "Dark mode",
     themeLight: "Light mode",
+    listenPlaying: "Playing…",
+    ttsUnavailable: "Voice is not available in this browser.",
     btnBackSchemes: "Back to results",
     btnFinishGuidance: "Finish application guidance (voice confirmed)",
     disclaimer: "Disclaimer: These outcomes are for guidance purposes and do not represent an official government determination. Formal application on designated government portals is required.",
@@ -964,7 +968,7 @@ function renderSchemes(schemes) {
         ` : ''}
 
         <div class="audio-controls">
-          <button class="listen-btn" onclick="playAudio('${encodeURIComponent(s.explanation)}', '${s.audio_uri || ''}')">
+          <button class="listen-btn" onclick="playAudio('${encodeURIComponent(s.explanation)}', '${s.audio_uri || ''}', this)">
             ${ICON_VOL} ${t.listen}
           </button>
           ${s.status === 'Eligible' ? `
@@ -985,44 +989,137 @@ window.setSchemeSort = function(sortKey) {
   if (lastSchemes.length > 0) renderSchemes(lastSchemes);
 };
 
-window.playAudio = async function(encodedText, preloadedUri) {
+let currentListenBtn = null;
+
+function setListenPlaying(btn, playing) {
+  if (!btn || btn._origHTML === undefined) {
+    if (btn) btn._origHTML = btn.innerHTML;
+  }
+  const t = i18n[currentLang];
+  if (playing) {
+    if (currentListenBtn && currentListenBtn !== btn) {
+      currentListenBtn.innerHTML = currentListenBtn._origHTML;
+      currentListenBtn._origHTML = undefined;
+    }
+    currentListenBtn = btn;
+    btn.innerHTML = `${ICON_VOL} ${t.listenPlaying}`;
+    btn.classList.add("playing");
+  } else {
+    btn.innerHTML = btn._origHTML;
+    btn._origHTML = undefined;
+    btn.classList.remove("playing");
+    if (currentListenBtn === btn) currentListenBtn = null;
+  }
+}
+
+function stopAllAudio() {
   if (currentAudio) {
     currentAudio.pause();
     currentAudio = null;
   }
+  if ("speechSynthesis" in window) {
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+  }
+}
 
-  let audioSrc = preloadedUri;
+function findVoiceForLang() {
+  const voices = window.speechSynthesis.getVoices();
+  const base = currentLang.split("-")[0].toLowerCase();
+  return voices.find(v => v.lang.replace("_", "-").toLowerCase() === currentLang.toLowerCase())
+      || voices.find(v => v.lang.replace("_", "-").toLowerCase().startsWith(base))
+      || null;
+}
+
+function loadVoices(timeoutMs) {
+  return new Promise(resolve => {
+    const synth = window.speechSynthesis;
+    const immediate = synth.getVoices();
+    if (immediate.length > 0) { resolve(); return; }
+    const timer = setTimeout(resolve, timeoutMs);
+    synth.addEventListener("voiceschanged", () => {
+      clearTimeout(timer);
+      resolve();
+    }, { once: true });
+  });
+}
+
+function speakWithBrowser(text, btn) {
+  const t = i18n[currentLang];
+  if (!("speechSynthesis" in window)) {
+    stopAllAudio();
+    if (btn) setListenPlaying(btn, false);
+    playAudioNotice(t.ttsUnavailable);
+    return;
+  }
+  loadVoices(500).then(() => {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = currentLang;
+    const voice = findVoiceForLang();
+    if (voice) utter.voice = voice;
+    utter.onend = () => { if (btn) setListenPlaying(btn, false); };
+    utter.onerror = () => { if (btn) setListenPlaying(btn, false); };
+    window.speechSynthesis.speak(utter);
+    // Safety: some browsers never fire onend if speech fails silently
+    setTimeout(() => {
+      if (!window.speechSynthesis.speaking && btn && currentListenBtn === btn) {
+        setListenPlaying(btn, false);
+      }
+    }, 600);
+  });
+}
+
+function playAudioNotice(text) {
+  if (!text) return;
+  const el = document.createElement("div");
+  el.className = "tts-note";
+  el.innerText = text;
+  const box = document.getElementById("schemes-container");
+  box.prepend(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+window.playAudio = async function(encodedText, preloadedUri, btn) {
+  stopAllAudio();
+  setListenPlaying(btn, true);
+
+  let audioSrc = (preloadedUri && preloadedUri.startsWith("data:audio")) ? preloadedUri : null;
   const text = decodeURIComponent(encodedText);
 
-  // If preloaded is missing or invalid, generate on the fly with proper English or Hindi speaker
-  if (!audioSrc || audioSrc === "null" || audioSrc === "") {
+  if (!audioSrc) {
     try {
       const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          text: text, 
+        body: JSON.stringify({
+          text: text,
           language: currentLang,
           speaker: currentLang === "en-IN" ? "simran" : "ritu"
         })
       });
-      const data = await res.json();
-      audioSrc = data.audio_uri;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.audio_uri && data.audio_uri.startsWith("data:audio")) {
+          audioSrc = data.audio_uri;
+        }
+      }
     } catch (e) {
       console.error("TTS fetch note:", e);
     }
   }
 
-  if (audioSrc && audioSrc.startsWith("data:audio")) {
+  if (audioSrc) {
     currentAudio = new Audio(audioSrc);
-    currentAudio.play();
+    currentAudio.onended = () => { if (btn) setListenPlaying(btn, false); };
+    currentAudio.onerror = () => {
+      if (btn) setListenPlaying(btn, false);
+      speakWithBrowser(text, btn);
+    };
+    currentAudio.play().catch(() => {
+      if (btn) setListenPlaying(btn, false);
+      speakWithBrowser(text, btn);
+    });
   } else {
-    // Web Speech API fallback
-    if ('speechSynthesis' in window) {
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = currentLang;
-      window.speechSynthesis.speak(utter);
-    }
+    speakWithBrowser(text, btn);
   }
 };
 

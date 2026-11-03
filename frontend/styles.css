@@ -1158,8 +1158,28 @@ main {
   background: var(--surface-dim);
 }
 
+.listen-btn.playing {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+  cursor: progress;
+}
+
+.listen-btn.playing svg {
+  color: var(--accent-strong);
+}
+
 .listen-btn svg {
   color: var(--text-secondary);
+}
+
+.tts-note {
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  color: var(--warn-fg);
+  border-radius: var(--radius-control);
+  font-size: var(--fs-sm);
 }
 
 .btn-apply {
