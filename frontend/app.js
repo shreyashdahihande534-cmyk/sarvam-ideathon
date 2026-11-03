@@ -1052,19 +1052,33 @@ function speakWithBrowser(text, btn) {
     return;
   }
   loadVoices(500).then(() => {
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = currentLang;
-    const voice = findVoiceForLang();
-    if (voice) utter.voice = voice;
-    utter.onend = () => { if (btn) setListenPlaying(btn, false); };
-    utter.onerror = () => { if (btn) setListenPlaying(btn, false); };
-    window.speechSynthesis.speak(utter);
-    // Safety: some browsers never fire onend if speech fails silently
+    // Chrome quirk: a synchronous speak() right after cancel() gets swallowed — give it a beat
     setTimeout(() => {
-      if (!window.speechSynthesis.speaking && btn && currentListenBtn === btn) {
-        setListenPlaying(btn, false);
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = currentLang;
+      const voice = findVoiceForLang();
+      if (voice) utter.voice = voice;
+      utter.onend = () => { if (btn) setListenPlaying(btn, false); };
+      utter.onerror = () => { if (btn) setListenPlaying(btn, false); };
+      try {
+        window.speechSynthesis.speak(utter);
+        // Nudge Chrome out of a paused state, then re-release if it silently stuck
+        setTimeout(() => {
+          try { window.speechSynthesis.resume(); } catch (e) {}
+        }, 80);
+      } catch (e) {
+        if (btn) setListenPlaying(btn, false);
+        playAudioNotice(t.ttsUnavailable);
+        return;
       }
-    }, 600);
+      // Safety: revert only when synthesis truly never started
+      setTimeout(() => {
+        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending && btn && currentListenBtn === btn) {
+          setListenPlaying(btn, false);
+          playAudioNotice(t.ttsUnavailable);
+        }
+      }, 1400);
+    }, 60);
   });
 }
 
@@ -1104,6 +1118,24 @@ window.playAudio = async function(encodedText, preloadedUri, btn) {
       }
     } catch (e) {
       console.error("TTS fetch note:", e);
+    }
+  }
+
+  if (!audioSrc) {
+    try {
+      const resLocal = await fetch("/api/tts/local", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text, language: currentLang })
+      });
+      if (resLocal.ok) {
+        const dataLocal = await resLocal.json();
+        if (dataLocal.audio_uri && dataLocal.audio_uri.startsWith("data:audio")) {
+          audioSrc = dataLocal.audio_uri;
+        }
+      }
+    } catch (e) {
+      console.error("Local TTS note:", e);
     }
   }
 

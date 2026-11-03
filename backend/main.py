@@ -1,4 +1,7 @@
 import os
+import base64
+import shutil
+import subprocess
 import json
 from typing import Dict, Any, Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
@@ -177,6 +180,27 @@ def tts_endpoint(req: TTSRequest):
     if not audio_uri:
         raise HTTPException(status_code=500, detail="Failed to synthesize speech")
     return {"audio_uri": audio_uri}
+
+
+@app.post("/api/tts/local")
+def tts_local_endpoint(req: TTSRequest):
+    """Guaranteed offline voice via espeak-ng (no API key needed). New endpoint; existing contracts untouched."""
+    text = (req.text or "").strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="Empty text")
+    exe = shutil.which("espeak-ng") or shutil.which("espeak")
+    if not exe:
+        raise HTTPException(status_code=501, detail="Local TTS engine (espeak-ng) not installed")
+    lang = "hi-IN" if "hi" in (req.language or "").lower() else "en"
+    voice = "hi" if lang == "hi-IN" else "en"
+    try:
+        out = subprocess.run(
+            [exe, "-v", voice, "-s", "145", "--stdout", text[:400]],
+            capture_output=True, timeout=25, check=True
+        )
+    except Exception:
+        raise HTTPException(status_code=500, detail="Local TTS synthesis failed")
+    return {"audio_uri": "data:audio/wav;base64," + base64.b64encode(out.stdout).decode("ascii")}
 
 @app.post("/api/documents/parse")
 async def parse_doc(file: UploadFile = File(...), doc_type: str = Form(...)):
