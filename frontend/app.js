@@ -517,6 +517,9 @@ function setupMic() {
   let stream = null;
   let audioCtx = null;
   let processor = null;
+  let analyser = null;
+  let freqData = null;
+  let rafId = null;
   let pcm = [];
   let captureRate = 16000;
   let timerInt = null;
@@ -529,8 +532,31 @@ function setupMic() {
     statusEl.classList.toggle("ack", !!ack);
   }
 
+  // Live microphone visualizer under the mic button
+  const visBars = Array.from(document.querySelectorAll("#waveviz .wave-bar"));
+  const DC_BINS = 6;
+  function drawVisualizer() {
+    if (!recording) return;
+    rafId = requestAnimationFrame(drawVisualizer);
+    if (!analyser) return;
+    analyser.getByteFrequencyData(freqData);
+    const step = Math.max(1, Math.floor((freqData.length - DC_BINS) / visBars.length));
+    visBars.forEach((bar, i) => {
+      let sum = 0;
+      for (let j = 0; j < step; j++) sum += freqData[DC_BINS + i * step + j] || 0;
+      const level = sum / step / 255;
+      bar.style.height = `${(4 + Math.sqrt(level) * 24).toFixed(1)}px`;
+    });
+  }
+
+  function resetVisualizer() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    visBars.forEach(bar => { bar.style.height = ""; });
+  }
+
   function teardownCapture() {
     if (processor) { try { processor.disconnect(); } catch (e) {} processor = null; }
+    if (analyser) { try { analyser.disconnect(); } catch (e) {} analyser = null; }
     if (stream) { try { stream.getTracks().forEach(tr => tr.stop()); } catch (e) {} stream = null; }
     if (audioCtx) { try { audioCtx.close(); } catch (e) {} audioCtx = null; }
   }
@@ -538,6 +564,7 @@ function setupMic() {
   function cleanup() {
     recording = false;
     clearInterval(timerInt);
+    resetVisualizer();
     micBtn.classList.remove("recording");
     timerEl.hidden = true;
     promptEl.innerText = t().micPrompt;
@@ -622,6 +649,13 @@ function setupMic() {
         source.connect(processor);
         processor.connect(sink);
         sink.connect(audioCtx.destination);
+
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        analyser.smoothingTimeConstant = 0.75;
+        source.connect(analyser);
+        freqData = new Uint8Array(analyser.frequencyBinCount);
+        drawVisualizer();
       } catch (e) {
         teardownCapture();
         setStatus(t().micDenied, false);
